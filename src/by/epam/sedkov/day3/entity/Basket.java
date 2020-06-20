@@ -1,44 +1,31 @@
 package by.epam.sedkov.day3.entity;
 
+import by.epam.sedkov.day3.exception.ProjectException;
+
 import java.util.ArrayList;
 import java.util.StringJoiner;
 
 public class Basket {
 
-    public static final double BASKET_MAX_VOLUME = 500_000;                         //cm3
-    public static final double BASKET_MAX_DIAMETER = 500;                           //cm
+    private static final double BASKET_MAX_VOLUME = 500_000;
 
-    private double volume;
-    private double diameter;
+    private final double volume;
     private ArrayList<Ball> balls;
 
-    public Basket() {
-    }
-
-    public Basket(double volume, double diameter) {
-        this.volume = volume;
-        this.diameter = diameter;
-        balls = new ArrayList<Ball>();
+    public Basket(double volume) {
+        if (volume > 0 && volume <= BASKET_MAX_VOLUME) {
+            this.volume = volume;
+        } else {
+            this.volume = -1;
+        }
     }
 
     public double getVolume() {
         return volume;
     }
 
-    public void setVolume(double volume) {
-        this.volume = volume;
-    }
-
-    public double getDiameter() {
-        return diameter;
-    }
-
-    public void setDiameter(double diameter) {
-        this.diameter = diameter;
-    }
-
     public ArrayList<Ball> getBalls() {
-        return this.balls;
+        return balls;
     }
 
     public void setBalls(ArrayList<Ball> balls) {
@@ -47,22 +34,17 @@ public class Basket {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
+        if (o == this) {
             return true;
         }
-        if (o == null || this.getClass() != o.getClass()) {
+        if (o == null || o.getClass() != this.getClass()) {
             return false;
         }
-
         Basket that = (Basket) o;
-
         if (Double.compare(that.volume, this.volume) != 0) {
             return false;
         }
-        if (Double.compare(that.diameter, this.diameter) != 0) {
-            return false;
-        }
-        return that.balls != null ? that.balls.equals(this.balls) : that.balls == null;
+        return this.balls != null ? this.balls.equals(that.balls) : that.balls == null;
     }
 
     @Override
@@ -71,23 +53,33 @@ public class Basket {
         long temp;
         temp = Double.doubleToLongBits(volume);
         result = (int) (temp ^ (temp >>> 32));
-        temp = Double.doubleToLongBits(diameter);
-        result = 31 * result + (int) (temp ^ (temp >>> 32));
         result = 31 * result + (balls != null ? balls.hashCode() : 0);
         return result;
     }
 
     @Override
     public String toString() {
-        return new StringJoiner(", ", Basket.class.getSimpleName() + "[", "]")
-                .add("volume=" + volume)
-                .add("diameter=" + diameter)
-                .add("balls=" + balls)
+        return new StringJoiner(", ", Basket.class.getSimpleName() + " [", "]")
+                .add("volume = " + volume + " cm3")
+                .add("balls = " + balls)
                 .toString();
     }
 
-    public boolean addBall(Ball ball) {
-        volume = volume - ball.getVolume();
-        return balls.add(ball);
+    public Ball get(int index) throws ProjectException {
+        if (index >= 0 && index < balls.size()) {
+            return balls.get(index);
+        } else {
+            throw new ProjectException("Wrong index");
+        }
     }
+
+    public boolean add(Ball ball) {
+        if (balls == null) {
+            balls = new ArrayList<>();
+            return balls.add(ball);
+        } else {
+            return balls.add(ball);
+        }
+    }
+
 }

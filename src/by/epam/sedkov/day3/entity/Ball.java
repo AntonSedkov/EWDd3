@@ -4,22 +4,24 @@ import java.util.StringJoiner;
 
 public class Ball {
 
-    public static final double BALL_MAX_VOLUME = 15000;                         //cm3
-    public static final double BALL_MAX_DIAMETER = 100;                         //cm
-    public static final double BALL_MAX_WEIGHT = 800;                           //gr
+    private static final double BALL_MAX_VOLUME = 15000;
+    private static final double BALL_MAX_WEIGHT = 800;
 
-    private double volume;
-    private double diameter;
-    private double weight;
+    private final double volume;
+    private final double weight;
     private ColorEnum color;
 
-    public Ball() {
-    }
-
-    public Ball(double volume, double diameter, double weight, ColorEnum color) {
-        this.volume = volume;
-        this.diameter = diameter;
-        this.weight = weight;
+    public Ball(double volume, double weight, ColorEnum color) {
+        if (volume > 0 && volume <= BALL_MAX_VOLUME) {
+            this.volume = volume;
+        } else {
+            this.volume = -1;
+        }
+        if (weight > 0 && weight <= BALL_MAX_WEIGHT) {
+            this.weight = weight;
+        } else {
+            this.weight = -1;
+        }
         this.color = color;
     }
 
@@ -27,24 +29,8 @@ public class Ball {
         return volume;
     }
 
-    public void setVolume(double volume) {
-        this.volume = volume;
-    }
-
-    public double getDiameter() {
-        return diameter;
-    }
-
-    public void setDiameter(double diameter) {
-        this.diameter = diameter;
-    }
-
     public double getWeight() {
         return weight;
-    }
-
-    public void setWeight(double weight) {
-        this.weight = weight;
     }
 
     public ColorEnum getColor() {
@@ -57,25 +43,20 @@ public class Ball {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
+        if (o == this) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (o == null || o.getClass() != this.getClass()) {
             return false;
         }
-
         Ball that = (Ball) o;
-
         if (Double.compare(that.volume, this.volume) != 0) {
-            return false;
-        }
-        if (Double.compare(that.diameter, this.diameter) != 0) {
             return false;
         }
         if (Double.compare(that.weight, this.weight) != 0) {
             return false;
         }
-        return this.color == that.color;
+        return that.color == this.color;
     }
 
     @Override
@@ -84,8 +65,6 @@ public class Ball {
         long temp;
         temp = Double.doubleToLongBits(volume);
         result = (int) (temp ^ (temp >>> 32));
-        temp = Double.doubleToLongBits(diameter);
-        result = 31 * result + (int) (temp ^ (temp >>> 32));
         temp = Double.doubleToLongBits(weight);
         result = 31 * result + (int) (temp ^ (temp >>> 32));
         result = 31 * result + (color != null ? color.hashCode() : 0);
@@ -94,11 +73,10 @@ public class Ball {
 
     @Override
     public String toString() {
-        return new StringJoiner(", ", Ball.class.getSimpleName() + "[", "]")
-                .add("volume=" + volume)
-                .add("diameter=" + diameter)
-                .add("weight=" + weight)
-                .add("color=" + color)
+        return new StringJoiner(", ", Ball.class.getSimpleName() + " [", "]\n")
+                .add("volume = " + volume + " cm3")
+                .add("weight = " + weight + " gr")
+                .add("color = " + color)
                 .toString();
     }
 
